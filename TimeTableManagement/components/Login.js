@@ -1,6 +1,8 @@
+import React, { useEffect, useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Heading from '../components/Heading';
 import CustomButton from '../components/CustomButton';
 import colors from '../assets/colors';
@@ -10,12 +12,29 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      const checkToken = async () => {
+        try {
+          const storedEmail = await AsyncStorage.getItem('email');
+          console.log(storedEmail);
+          if (storedEmail) {
+            navigation.navigate('MainScreen');
+          }
+        } catch (error) {
+          console.error('Error retrieving email:', error);
+        }
+      };
+
+      checkToken();
+    }, [navigation])
+  );
+
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please enter both email and password.');
       return;
     }
-
     setLoading(true);
 
     try {
@@ -29,9 +48,13 @@ const Login = ({ navigation }) => {
       const responseText = await response.text(); // Get raw response text
       console.log('Raw Response:', responseText);
 
-      if (responseText==='Login successful') {
+      if (responseText === 'Login successful') {
+        // Store email as the token in AsyncStorage
+        await AsyncStorage.setItem('email', email);
         Alert.alert('Success', 'Login successful!');
-        navigation.navigate('MainScreen'); // ✅ Correct navigation
+        // Redirect back to Homepage. Since email is now not empty,
+        // Homepage's useEffect can navigate to Dashboard.
+        navigation.navigate('Homepage');
       } else {
         Alert.alert('Error', 'Invalid email or password.');
       }
@@ -66,12 +89,11 @@ const Login = ({ navigation }) => {
         />
       </View>
 
-      {/* ✅ Fix: Pass onPress directly */}
       <CustomButton
         bgColor={colors.primary}
         textColor={colors.textWhite}
         content={loading ? 'Logging in...' : 'Login'}
-        onPress={handleLogin} // ✅ Pass function instead of navigation
+        onPress={handleLogin}
       />
 
       <View className="mt-10">

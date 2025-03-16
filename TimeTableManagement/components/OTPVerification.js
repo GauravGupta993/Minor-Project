@@ -22,7 +22,7 @@ const OTPVerification = ({ route, navigation }) => {
       console.log(response);
       if (response.data==='Signup successful') {
         Alert.alert("Success", "OTP Verified Successfully!");
-        navigation.navigate("MainScreen"); // Redirect to Home or another page
+        navigation.navigate("Homepage"); // Redirect to Home or another page
       }else if(response.data==='No pending signup found for this email'){
         Alert.alert(response.data);
       }

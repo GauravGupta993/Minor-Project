@@ -67,6 +67,7 @@ public class AuthController {
         String email = payload.get("email");
         String password = payload.get("password");
         // Look up the user by email
+        System.out.println(email);
         User user = userService.findByEmail(email).orElse(null);
         if (user != null && user.getPassword().equals(password)) {
             // In a real app, you would generate and return a token (like JWT)

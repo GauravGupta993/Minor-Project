@@ -1,10 +1,10 @@
-package com.collegeproject.TimeTableManager;
+package com._thSem.Project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TimeTableManagerApplicationTests {
+class ProjectApplicationTests {
 
 	@Test
 	void contextLoads() {

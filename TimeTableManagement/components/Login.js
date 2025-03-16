@@ -35,7 +35,7 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Image source={logo} style={styles.logo} />
+      {/* <Image source={logo} style={styles.logo} /> */}
       <Text style={styles.title}>Login</Text>
       <Formik
         validationSchema={loginValidationSchema}

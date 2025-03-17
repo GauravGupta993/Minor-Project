@@ -1,0 +1,25 @@
+package com._thSem.Project.controller;
+
+import com._thSem.Project.model.TimeTableUpdateRequest;
+import com._thSem.Project.service.TimeTableService;
+import com._thSem.Project.service.TimetableConversionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/timetable")
+@RequiredArgsConstructor
+public class TimetableController {
+ private TimeTableService timeTableService;
+    @PostMapping("/update")
+        public  ResponseEntity<Boolean> update(@RequestBody TimeTableUpdateRequest timeTableUpdateRequest){
+        timeTableService.update(timeTableUpdateRequest.getEmail(), timeTableUpdateRequest);
+        return ResponseEntity.ok(true);
+        }
+
+
+}

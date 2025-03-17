@@ -9,7 +9,16 @@ import java.util.List;
 
 public class TimeTableUpdateRequest {
     public String day;
+    public String email;
     public List<Slot> Slots;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getDay() {
         return day;

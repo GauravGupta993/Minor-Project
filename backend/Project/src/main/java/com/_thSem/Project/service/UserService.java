@@ -1,6 +1,6 @@
 package com._thSem.Project.service;
 
-import com._thSem.Project.model.User;
+import com._thSem.Project.entity.User;
 import com._thSem.Project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +24,12 @@ public class UserService {
     }
 
     // Get User by ID
-    public Optional<User> getUserById(Long id) {
+    public Optional<User> getUserById(Integer id) {
         return userRepository.findById(id);
     }
 
     // Update User
-    public User updateUser(Long id, User updatedUser) {
+    public User updateUser(Integer id, User updatedUser) {
         return userRepository.findById(id).map(user -> {
             user.setName(updatedUser.getName());
             user.setEmail(updatedUser.getEmail());
@@ -39,7 +39,7 @@ public class UserService {
     }
 
     // Delete User
-    public void deleteUser(Long id) {
+    public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
 

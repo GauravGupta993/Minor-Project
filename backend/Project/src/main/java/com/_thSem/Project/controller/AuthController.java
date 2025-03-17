@@ -1,13 +1,16 @@
 package com._thSem.Project.controller;
 
-import com._thSem.Project.model.User;
+import com._thSem.Project.entity.User;
 import com._thSem.Project.service.OTPService;
+import com._thSem.Project.service.TimeTableService;
 import com._thSem.Project.service.UserService;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -18,6 +21,7 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+    private  TimeTableService timeTableService;
 
     // Temporary storage for pending user registration (email -> User)
     private Map<String, User> pendingUsers = new HashMap<>();
@@ -52,6 +56,10 @@ public class AuthController {
                 // Cleanup temporary data
                 otpService.removeOTP(email);
                 pendingUsers.remove(email);
+//                User user1=userService.findByEmail(email).get();
+//                timeTableService.createTimeTable(user1);
+
+
                 return "Signup successful";
             } else {
                 return "No pending signup found for this email";

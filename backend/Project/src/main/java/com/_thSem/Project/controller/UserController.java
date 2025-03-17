@@ -1,6 +1,6 @@
 package com._thSem.Project.controller;
 
-import com._thSem.Project.model.User;
+import com._thSem.Project.entity.User;
 import com._thSem.Project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class UserController {
 
     // Get User by ID
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
+    public Optional<User> getUserById(@PathVariable Integer id) {
         return userService.getUserById(id);
     }
 
@@ -37,7 +37,7 @@ public class UserController {
 
     // Delete User
     @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
         return "User deleted successfully";
     }

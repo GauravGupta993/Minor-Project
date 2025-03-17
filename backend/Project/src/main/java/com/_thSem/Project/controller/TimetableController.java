@@ -5,10 +5,7 @@ import com._thSem.Project.service.TimeTableService;
 import com._thSem.Project.service.TimetableConversionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/timetable")
@@ -20,6 +17,12 @@ public class TimetableController {
         timeTableService.update(timeTableUpdateRequest.getEmail(), timeTableUpdateRequest);
         return ResponseEntity.ok(true);
         }
+    @GetMapping("/{email}/{day}")
+    public ResponseEntity<TimeTableUpdateRequest>get(@PathVariable String email ,@PathVariable String day){
+        return ResponseEntity.ok(timeTableService.getTimeTable(email,day));
+
+    }
+    
 
 
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,9 @@ import {
   TextInput,
   Switch,
   Modal,
+  ActivityIndicator,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { BlurView } from "expo-blur";
 
@@ -28,19 +30,57 @@ const roomLetters = ["L", "T"];
 
 const TimeTablePage = () => {
   const [selectedDay, setSelectedDay] = useState(days[0]);
-  const [slots, setSlots] = useState(
-    timeSlots.reduce((acc, slot) => {
-      acc[slot.id] = {
-        hasClass: false,
-        roomLetter: "L",
-        roomNumber: "",
-        time: slot.time,
-      };
-      return acc;
-    }, {})
-  );
+  const [slots, setSlots] = useState({});
+  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [activeSlot, setActiveSlot] = useState(null);
+  const [email, setEmail] = useState(null);
+
+  // Fetch timetable when day changes
+  useEffect(() => {
+    const fetchEmailAndTimetable = async () => {
+      try {
+        const storedEmail = await AsyncStorage.getItem("email");
+        if (storedEmail) {
+          setEmail(storedEmail);
+          fetchTimetable(storedEmail);
+        }
+      } catch (error) {
+        console.error("Error retrieving email:", error);
+      }
+    };
+
+    fetchEmailAndTimetable();
+  }, [selectedDay]);
+
+  const fetchTimetable = async (userEmail) => {
+    if (!userEmail) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://10.0.2.2:8080/api/timetable/${userEmail}/${selectedDay}`
+      );
+      const data = await response.json();
+      if (data.Slots) {
+        const updatedSlots = data.Slots.reduce((acc, slot) => {
+          acc[slot.slot] = {
+            hasClass: slot.hasClass,
+            roomLetter: slot.room !== "NULL" ? slot.room[0] : "L",
+            roomNumber: slot.room !== "NULL" ? slot.room.slice(1) : "",
+            time: timeSlots.find((s) => s.id === slot.slot)?.time || "",
+          };
+          return acc;
+        }, {});
+        setSlots(updatedSlots);
+      }
+    } catch (error) {
+      console.error("Error fetching timetable:", error);
+      Alert.alert("Error", "Failed to fetch timetable.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const handleSlotPress = (slotId) => {
     setActiveSlot(slotId);
@@ -55,28 +95,26 @@ const TimeTablePage = () => {
     }));
   };
 
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setActiveSlot(null);
-  };
-
   const handleSubmit = async () => {
+    if (!email) {
+      Alert.alert("Error", "User email not found.");
+      return;
+    }
     const timetable = {
       day: selectedDay,
+      email,
       slots: timeSlots.map((slot) => ({
-        slot: slot.id, // saving slot number instead of time
-        hasClass: slots[slot.id].hasClass,
-        room: slots[slot.id].hasClass
+        slot: slot.id,
+        hasClass: slots[slot.id]?.hasClass || false,
+        room: slots[slot.id]?.hasClass
           ? `${slots[slot.id].roomLetter}${slots[slot.id].roomNumber || ""}`
           : null,
       })),
     };
 
-    console.log("Timetable to submit:", timetable);
-
     try {
       const response = await fetch(
-        "http://your-backend-url.com/api/timetable",
+        "http://10.0.2.2:8080/api/timetable/update",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -87,21 +125,26 @@ const TimeTablePage = () => {
       Alert.alert("Success", "Timetable saved successfully");
     } catch (error) {
       console.error("Error saving timetable:", error);
-      Alert.alert("Error", "Failed to save timetable. Please try again.");
+      Alert.alert("Error", "Failed to save timetable.");
     }
+  };
+
+
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setActiveSlot(null);
   };
 
   const currentSlotData = activeSlot ? slots[activeSlot] : null;
 
   return (
-    <ScrollView className="bg-white p-4" nestedScrollEnabled={true}>
+    <ScrollView className="bg-white p-4">
       <Text className="text-2xl font-bold mb-4">Select Day</Text>
       <View className="border border-gray-300 rounded mb-4">
         <Picker
           selectedValue={selectedDay}
           onValueChange={setSelectedDay}
           style={{ height: 55 }}
-          className="w-full"
         >
           {days.map((day, index) => (
             <Picker.Item label={day} value={day} key={index} />
@@ -109,23 +152,27 @@ const TimeTablePage = () => {
         </Picker>
       </View>
 
-      <Text className="text-2xl font-bold mb-4">Time Slots</Text>
-      {timeSlots.map((slot) => (
-        <TouchableOpacity
-          key={slot.id}
-          onPress={() => handleSlotPress(slot.id)}
-          className="mb-4 p-4 border border-gray-300 rounded"
-        >
-          <Text className="text-lg font-semibold mb-2">{slot.time}</Text>
-          <Text className="text-base">
-            {slots[slot.id].hasClass
-              ? `Scheduled: ${slots[slot.id].roomLetter}${
-                  slots[slot.id].roomNumber
-                }`
-              : "Not Scheduled"}
-          </Text>
-        </TouchableOpacity>
-      ))}
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <Text className="text-2xl font-bold mb-4">Time Slots</Text>
+          {timeSlots.map((slot) => (
+            <TouchableOpacity
+              key={slot.id}
+              onPress={() => handleSlotPress(slot.id)}
+              className="mb-4 p-4 border border-gray-300 rounded"
+            >
+              <Text className="text-lg font-semibold mb-2">{slot.time}</Text>
+              <Text className="text-base">
+                {slots[slot.id]?.hasClass
+                  ? `Scheduled: ${slots[slot.id].roomLetter}${slots[slot.id].roomNumber}`
+                  : "Not Scheduled"}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </>
+      )}
 
       <TouchableOpacity
         className="bg-blue-500 p-4 rounded items-center my-4"
@@ -134,14 +181,12 @@ const TimeTablePage = () => {
         <Text className="text-white text-xl font-bold">Save Timetable</Text>
       </TouchableOpacity>
 
-      {/* Modal for slot data entry */}
       <Modal
         visible={modalVisible}
         transparent={true}
         animationType="slide"
         onRequestClose={handleModalClose}
       >
-        {/* Using BlurView for a blurred background */}
         <BlurView intensity={95} tint="light" style={{ flex: 1 }}>
           <View className="flex-1 justify-center items-center">
             <View className="bg-white p-4 rounded w-80 shadow-xl">
@@ -171,7 +216,6 @@ const TimeTablePage = () => {
                             updateActiveSlot({ roomLetter: itemValue })
                           }
                           style={{ height: 50 }}
-                          className="w-full"
                         >
                           {roomLetters.map((letter, idx) => (
                             <Picker.Item
@@ -199,12 +243,6 @@ const TimeTablePage = () => {
                     </>
                   )}
                   <View className="flex-row justify-end">
-                    <TouchableOpacity
-                      onPress={handleModalClose}
-                      className="bg-gray-500 p-2 rounded mr-2"
-                    >
-                      <Text className="text-white">Cancel</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity
                       onPress={handleModalClose}
                       className="bg-blue-500 p-2 rounded"

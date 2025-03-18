@@ -10,7 +10,7 @@ public class Rooms {
     @GeneratedValue
     private  Integer id;
     private String room;
-    private  String number;
+    private  Integer number;
     private String day;
     private Integer slot;
 }

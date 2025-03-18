@@ -9,9 +9,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/timetable")
-@RequiredArgsConstructor
+
 public class TimetableController {
- private TimeTableService timeTableService;
+ private final  TimeTableService timeTableService;
+
+    public TimetableController(TimeTableService timeTableService) {
+        this.timeTableService = timeTableService;
+    }
+
     @PostMapping("/update")
         public  ResponseEntity<Boolean> update(@RequestBody TimeTableUpdateRequest timeTableUpdateRequest){
         timeTableService.update(timeTableUpdateRequest.getEmail(), timeTableUpdateRequest);
@@ -19,7 +24,7 @@ public class TimetableController {
         }
     @GetMapping("/{email}/{day}")
     public ResponseEntity<TimeTableUpdateRequest>get(@PathVariable String email ,@PathVariable String day){
-        return ResponseEntity.ok(timeTableService.getTimeTable("gaurav0110503@gmail.com","Monday"));
+        return ResponseEntity.ok(timeTableService.getTimeTable(email,day));
 
     }
     @GetMapping("/nextfree/{email}")

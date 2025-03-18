@@ -7,6 +7,7 @@ import com._thSem.Project.model.TimeTableUpdateRequest;
 import com._thSem.Project.repository.TimeTableRepository;
 import com._thSem.Project.repository.UserRepository;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -28,9 +29,11 @@ public class TimeTableService {
 //        this.userRepository = userRepository;
 //        this.timeTableRepository = timeTableRepository;
 //    }
-
+    @Autowired
     private    UserService userService;
+    @Autowired
     private  UserRepository userRepository;
+    @Autowired
     private  TimeTableRepository timeTableRepository;
     public  void update(String email, TimeTableUpdateRequest table){
         User user=userRepository.findByEmail(email).get();
@@ -162,7 +165,7 @@ public class TimeTableService {
         weekDays.add("Thursday");
         weekDays.add("Friday");
         for(int i=0;i<5;i++){
-            for(int j=1;j<=8;i++){
+            for(int j=1;j<=8;j++){
                 TimeTable t1=new TimeTable();
                 t1.setDay(weekDays.get(i));
                 t1.setHasClass(false);

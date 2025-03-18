@@ -50,7 +50,7 @@ const MainScreen = () => {
         className="bg-purple-500 p-4 rounded-lg w-64"
         onPress={() => navigation.navigate('TimeTable')}
       >
-        <Text className="text-white text-center text-lg">Show Schedule</Text>
+        <Text className="text-white text-center text-lg">Show and Edit Schedule</Text>
       </TouchableOpacity>
     </View>
   );

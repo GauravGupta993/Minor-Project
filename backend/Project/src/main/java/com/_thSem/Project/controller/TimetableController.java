@@ -19,7 +19,7 @@ public class TimetableController {
         }
     @GetMapping("/{email}/{day}")
     public ResponseEntity<TimeTableUpdateRequest>get(@PathVariable String email ,@PathVariable String day){
-        return ResponseEntity.ok(timeTableService.getTimeTable(email,day));
+        return ResponseEntity.ok(timeTableService.getTimeTable("gaurav0110503@gmail.com","Monday"));
 
     }
     @GetMapping("/nextfree/{email}")

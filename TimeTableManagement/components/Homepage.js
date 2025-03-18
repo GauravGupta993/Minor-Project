@@ -18,6 +18,7 @@ const HomePage = ({ navigation }) => {
           if (storedEmail) {
             navigation.navigate('MainScreen');
           }
+          // navigation.navigate('MainScreen');
         } catch (error) {
           console.error('Error retrieving email:', error);
         }

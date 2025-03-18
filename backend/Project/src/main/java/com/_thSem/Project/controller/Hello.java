@@ -18,8 +18,8 @@ public class Hello {
 
     @GetMapping("/hello")
     public String sayHello() {
-        TimetableConversionService timetableConversionService=new TimetableConversionService();
-        timetableConversionService.convertImageToTimetable("https://drive.google.com/file/d/1fIB62yaaNUGEHD9wK-N8wGKan52gP-Ja/view?usp=sharing");
+//        TimetableConversionService timetableConversionService=new TimetableConversionService();
+//        timetableConversionService.convertImageToTimetable("https://drive.google.com/file/d/1fIB62yaaNUGEHD9wK-N8wGKan52gP-Ja/view?usp=sharing");
         return "Hello, Spring Boot is running!";
     }
 }

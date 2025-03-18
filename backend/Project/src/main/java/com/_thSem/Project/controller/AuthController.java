@@ -5,6 +5,7 @@ import com._thSem.Project.service.OTPService;
 import com._thSem.Project.service.TimeTableService;
 import com._thSem.Project.service.UserService;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,17 +15,23 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private OTPService otpService;
+    private final OTPService otpService;
 
-    @Autowired
-    private UserService userService;
-    private  TimeTableService timeTableService;
+    private final UserService userService;
+
+    private final  TimeTableService timeTableService;
 
     // Temporary storage for pending user registration (email -> User)
     private Map<String, User> pendingUsers = new HashMap<>();
+
+    public AuthController(OTPService otpService, UserService userService, TimeTableService timeTableService) {
+        this.otpService = otpService;
+        this.userService = userService;
+        this.timeTableService = timeTableService;
+    }
 
     // Step 1: Request Signup (Generate OTP and send email)
     @PostMapping("/signup/request")
@@ -56,8 +63,8 @@ public class AuthController {
                 // Cleanup temporary data
                 otpService.removeOTP(email);
                 pendingUsers.remove(email);
-//                User user1=userService.findByEmail(email).get();
-//                timeTableService.createTimeTable(user1);
+                User user1=userService.findByEmail(email).get();
+                timeTableService.createTimeTable(user1);
 
 
                 return "Signup successful";

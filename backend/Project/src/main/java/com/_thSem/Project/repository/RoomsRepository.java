@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface RoomsRepository extends JpaRepository<Rooms,Integer> {
 
     Optional<Rooms> findByDayAndSlotAndRoomAndNumber(String day,Integer slot,String room,Integer number);
+
+    @Override
+    void deleteById(Integer integer);
 }

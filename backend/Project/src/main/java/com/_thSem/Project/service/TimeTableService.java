@@ -4,6 +4,7 @@ import com._thSem.Project.entity.TimeTable;
 import com._thSem.Project.entity.User;
 import com._thSem.Project.model.Slot;
 import com._thSem.Project.model.TimeTableUpdateRequest;
+import com._thSem.Project.repository.RoomsRepository;
 import com._thSem.Project.repository.TimeTableRepository;
 import com._thSem.Project.repository.UserRepository;
 import lombok.*;
@@ -30,6 +31,8 @@ public class TimeTableService {
 //        this.timeTableRepository = timeTableRepository;
 //    }
     @Autowired
+    private  final RoomsRepository roomsRepository;
+    @Autowired
     private    UserService userService;
     @Autowired
     private  UserRepository userRepository;
@@ -41,7 +44,10 @@ public class TimeTableService {
                  if(s.getHasClass()){
                      TimeTable timeTable=timeTableRepository.findTimeTableByDayAndUserAndSlot(table.getDay(),user,s.slot);
                      timeTable.setRoom(s.getRoom());
+                     String rm=s.getRoom();
+
                      timeTable.setHasClass(true);
+                     roomsRepository.deleteById(roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0),Integer.valueOf(rm.substring(1,rm.length()-1))).get().getId());
                      timeTableRepository.save(timeTable);
                  }
                  else{

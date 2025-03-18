@@ -22,7 +22,14 @@ public class TimetableController {
         return ResponseEntity.ok(timeTableService.getTimeTable(email,day));
 
     }
-    
+    @GetMapping("/nextfree/{email}")
+    public ResponseEntity<TimeTableUpdateRequest>nextfree(@PathVariable String email ){
+        return ResponseEntity.ok(timeTableService.getFreeSlot(email));
+
+    }
+
+
+
 
 
 }

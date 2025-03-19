@@ -1,5 +1,6 @@
 package com._thSem.Project.service;
 
+import com._thSem.Project.entity.Rooms;
 import com._thSem.Project.entity.TimeTable;
 import com._thSem.Project.entity.User;
 import com._thSem.Project.model.Slot;
@@ -25,19 +26,23 @@ import java.util.List;
 //@RequiredArgsConstructor
 
 public class TimeTableService {
-//    private TimeTableService(UserService userService, UserRepository userRepository, TimeTableRepository timeTableRepository) {
-//        this.userService = userService;
-//        this.userRepository = userRepository;
-//        this.timeTableRepository = timeTableRepository;
-//    }
-    @Autowired
+
+
+
     private  final RoomsRepository roomsRepository;
-    @Autowired
-    private    UserService userService;
-    @Autowired
-    private  UserRepository userRepository;
-    @Autowired
-    private  TimeTableRepository timeTableRepository;
+
+    public TimeTableService(RoomsRepository roomsRepository, UserService userService, UserRepository userRepository, TimeTableRepository timeTableRepository) {
+        this.roomsRepository = roomsRepository;
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.timeTableRepository = timeTableRepository;
+    }
+
+    private  final  UserService userService;
+
+    private final UserRepository userRepository;
+
+    private final TimeTableRepository timeTableRepository;
     public  void update(String email, TimeTableUpdateRequest table){
         User user=userRepository.findByEmail(email).get();
             for(Slot s: table.Slots){
@@ -47,13 +52,26 @@ public class TimeTableService {
                      String rm=s.getRoom();
 
                      timeTable.setHasClass(true);
-                     roomsRepository.deleteById(roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0),Integer.valueOf(rm.substring(1,rm.length()-1))).get().getId());
+                     Rooms rooms=new Rooms();
+                     rooms.setDay(table.day);
+                     rooms.setNumber(Integer.valueOf(rm.substring(1)));
+                     rooms.setSlot(s.getSlot());
+                     rooms.setRoom(rm.substring(0,1));
+                     roomsRepository.save(rooms);
+
+
+
+                     //roomsRepository.deleteById(roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0),Integer.valueOf(rm.substring(1,rm.length()-1))).get().getId());
                      timeTableRepository.save(timeTable);
                  }
                  else{
                      TimeTable timeTable=timeTableRepository.findTimeTableByDayAndUserAndSlot(table.getDay(),user,s.slot);
                      timeTable.setRoom("NULL");
                      timeTable.setHasClass(false);
+                     String rm=s.getRoom();
+//                     if(roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0),Integer.valueOf(rm.substring(1,rm.length()-1))).isPresent()){
+//                         roomsRepository.deleteById(roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0),Integer.valueOf(rm.substring(1,rm.length()-1))).get().getId());
+//                     }
                      timeTableRepository.save(timeTable);
                  }
             }

@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @Getter
 @Setter
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 
 //@RequiredArgsConstructor
 

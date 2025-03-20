@@ -62,9 +62,9 @@ public class TimeTableService {
 
 
 
-                     if(!roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0,1),Integer.valueOf(rm.substring(1))).isPresent()){
-                         roomsRepository.save(rooms);
-                     }
+//                     if(!roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0,1),Integer.valueOf(rm.substring(1))).isPresent()){
+//                         roomsRepository.save(rooms);
+//                     }
                      timeTableRepository.save(timeTable);
                  }
                  else{

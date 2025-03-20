@@ -57,11 +57,14 @@ public class TimeTableService {
                      rooms.setNumber(Integer.valueOf(rm.substring(1)));
                      rooms.setSlot(s.getSlot());
                      rooms.setRoom(rm.substring(0,1));
-                     roomsRepository.save(rooms);
 
 
 
-                     //roomsRepository.deleteById(roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0),Integer.valueOf(rm.substring(1,rm.length()-1))).get().getId());
+
+
+                     if(!roomsRepository.findByDayAndSlotAndRoomAndNumber(table.getDay(), s.slot,rm.substring(0),Integer.valueOf(rm.substring(1,rm.length()-1))).isPresent()){
+                         roomsRepository.save(rooms);
+                     }
                      timeTableRepository.save(timeTable);
                  }
                  else{

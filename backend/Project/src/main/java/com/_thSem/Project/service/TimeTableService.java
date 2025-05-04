@@ -209,8 +209,13 @@ public class TimeTableService {
 
     }
     public List<Integer> getBusySlotsByUserAndDay(Integer userId, int dayOfWeek) {
-        List<TimeTable> timetableEntries = timeTableRepository.findByUser_SidAndDayOfWeek(userId, dayOfWeek);
+        // Convert numeric day of week to string day name
+        String[] days = {"", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        String dayName = days[dayOfWeek];
+        
+        List<TimeTable> timetableEntries = timeTableRepository.findByUser_SidAndDay(userId, dayName);
         return timetableEntries.stream()
+                .filter(TimeTable::getHasClass)  // Only include slots that have classes
                 .map(TimeTable::getSlot)
                 .collect(Collectors.toList());
     }

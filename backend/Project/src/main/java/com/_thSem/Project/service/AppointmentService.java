@@ -36,13 +36,6 @@ public class AppointmentService {
     public List<User> getAllTeachers() {
         return userRepository.findByRole("teacher");
     }
-    // Add this to TimetableConversionService
-public List<Integer> getBusySlotsByUserAndDay(Integer userId, int dayOfWeek) {
-        List<TimeTable> timetableEntries = timeTableRepository.findByUser_SidAndDayOfWeek(userId, dayOfWeek);
-        return timetableEntries.stream()
-                .map(TimeTable::getSlot)
-                .collect(Collectors.toList());
-    }
 
     // Get free slots for a teacher on a given date
     public List<Integer> getTeacherFreeSlots(Integer teacherId, LocalDate date) {

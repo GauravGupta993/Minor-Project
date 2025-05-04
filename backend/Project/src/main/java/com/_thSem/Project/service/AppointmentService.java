@@ -2,9 +2,11 @@ package com._thSem.Project.service;
 
 import com._thSem.Project.entity.Appointment;
 import com._thSem.Project.entity.User;
+import com._thSem.Project.entity.TimeTable;
 import com._thSem.Project.enums.AppointmentStatus;
 import com._thSem.Project.repository.AppointmentRepository;
 import com._thSem.Project.repository.UserRepository;
+import com._thSem.Project.repository.TimeTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +27,21 @@ public class AppointmentService {
     private UserRepository userRepository;
 
     @Autowired
-    private TimetableConversionService timetableService;
+    private TimeTableRepository timeTableRepository;
+
+    @Autowired
+    private TimeTableService timetableService;
 
     // Get all teachers
     public List<User> getAllTeachers() {
         return userRepository.findByRole("teacher");
+    }
+    // Add this to TimetableConversionService
+public List<Integer> getBusySlotsByUserAndDay(Integer userId, int dayOfWeek) {
+        List<TimeTable> timetableEntries = timeTableRepository.findByUser_SidAndDayOfWeek(userId, dayOfWeek);
+        return timetableEntries.stream()
+                .map(TimeTable::getSlot)
+                .collect(Collectors.toList());
     }
 
     // Get free slots for a teacher on a given date
@@ -37,16 +49,18 @@ public class AppointmentService {
         User teacher = userRepository.findById(teacherId)
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         
-        // Get all slots from 1 to 8 (assuming 8 slots per day)
+        // Get all slots from 1 to 8
         List<Integer> allSlots = IntStream.rangeClosed(1, 8).boxed().collect(Collectors.toList());
         
-        // Get booked slots from appointments
-        List<Integer> bookedSlots = appointmentRepository.findBookedSlotsByTeacherAndDate(teacher, date);
+        // Find day of week (1-7, where 1 is Monday)
+        int dayOfWeek = date.getDayOfWeek().getValue();
         
-        // Remove booked slots from all slots
-        allSlots.removeAll(bookedSlots);
+        // Get teacher's timetable to find slots that have classes
+        // This assumes TimeTable has a method to get busy slots for a specific day
+        List<Integer> busySlots = timetableService.getBusySlotsByUserAndDay(teacher.getSid(), dayOfWeek);
         
-        // TODO: Check teacher's timetable and remove slots where they have classes
+        // Remove busy slots from all slots to get free slots
+        allSlots.removeAll(busySlots);
         
         return allSlots;
     }
@@ -60,30 +74,15 @@ public class AppointmentService {
         User teacher = userRepository.findById(teacherId)
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         
-        // Check if the slot is available
-        List<Appointment> existingAppointments = appointmentRepository
-                .findByTeacherAndDateAndSlot(teacher, date, slotNumber);
+        // Check if teacher has a class in this slot
+        int dayOfWeek = date.getDayOfWeek().getValue();
+        List<Integer> busySlots = timetableService.getBusySlotsByUserAndDay(teacher.getSid(), dayOfWeek);
         
-        if (!existingAppointments.isEmpty()) {
-            throw new RuntimeException("This slot is already booked");
+        if (busySlots.contains(slotNumber)) {
+            throw new RuntimeException("Teacher has a class in this slot");
         }
         
-        // TODO: Check teacher's timetable and confirm they don't have a class at this slot
-        
-        // Define start and end times based on slot number (example mapping)
-        Map<Integer, LocalTime[]> slotTimes = Map.of(
-            1, new LocalTime[]{LocalTime.of(9, 0), LocalTime.of(10, 0)},
-            2, new LocalTime[]{LocalTime.of(10, 0), LocalTime.of(11, 0)},
-            3, new LocalTime[]{LocalTime.of(11, 0), LocalTime.of(12, 0)},
-            4, new LocalTime[]{LocalTime.of(12, 0), LocalTime.of(13, 0)},
-            5, new LocalTime[]{LocalTime.of(14, 0), LocalTime.of(15, 0)},
-            6, new LocalTime[]{LocalTime.of(15, 0), LocalTime.of(16, 0)},
-            7, new LocalTime[]{LocalTime.of(16, 0), LocalTime.of(17, 0)},
-            8, new LocalTime[]{LocalTime.of(17, 0), LocalTime.of(18, 0)}
-        );
-        
-        LocalTime startTime = slotTimes.get(slotNumber)[0];
-        LocalTime endTime = slotTimes.get(slotNumber)[1];
+        // Allow multiple appointments in a free slot, so no need to check existing appointments
         
         Appointment appointment = new Appointment(student, teacher, date, slotNumber, description);
         

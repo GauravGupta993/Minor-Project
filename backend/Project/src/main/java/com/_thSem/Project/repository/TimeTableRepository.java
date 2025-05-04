@@ -13,4 +13,5 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Integer> {
    // List<TimeTable> findAllBy(User user);
     TimeTable findTimeTableByDayAndUserAndSlot(String day,User user,Integer slot);
     List<TimeTable> findAllByDayAndUser(String day,User user);
+    List<TimeTable> findByUser_SidAndDayOfWeek(Integer userId, int day);
 }

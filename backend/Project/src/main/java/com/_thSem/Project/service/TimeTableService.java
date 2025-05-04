@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Getter
@@ -206,6 +207,12 @@ public class TimeTableService {
             }
         }
 
+    }
+    public List<Integer> getBusySlotsByUserAndDay(Integer userId, int dayOfWeek) {
+        List<TimeTable> timetableEntries = timeTableRepository.findByUser_SidAndDayOfWeek(userId, dayOfWeek);
+        return timetableEntries.stream()
+                .map(TimeTable::getSlot)
+                .collect(Collectors.toList());
     }
 
 

@@ -72,6 +72,7 @@ const TimeTablePage = () => {
           return acc;
         }, {});
         setSlots(updatedSlots);
+        console.log(updatedSlots);
       }
     } catch (error) {
       console.error("Error fetching timetable:", error);
@@ -111,7 +112,7 @@ const TimeTablePage = () => {
           : null,
       })),
     };
-
+    console.log(timetable);
     try {
       const response = await fetch(
         "http://10.0.2.2:8080/api/timetable/update",

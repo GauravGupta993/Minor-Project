@@ -8,7 +8,7 @@ import colors from '../assets/colors';
 import Heading from '../components/Heading';
 import "../global.css";
 
-const HomePage = ({ navigation }) => {
+const StudentHomePage = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       const checkToken = async () => {
@@ -30,7 +30,7 @@ const HomePage = ({ navigation }) => {
   return (
     <SafeAreaView className="container px-7 bg-white h-full">
       <View className="flex justify-center items-center mt-24" />
-      <Heading content="Teacher Portal" />
+      <Heading content="Student Portal" />
       <Text className="text-sm opacity-60 text-textDark tracking-tight">
         Time Table Management System
       </Text>
@@ -52,4 +52,4 @@ const HomePage = ({ navigation }) => {
   );
 };
 
-export default HomePage;
+export default StudentHomePage;

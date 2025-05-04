@@ -57,6 +57,8 @@ public class TimeTableService {
                      rooms.setNumber(Integer.valueOf(rm.substring(1)));
                      rooms.setSlot(s.getSlot());
                      rooms.setRoom(rm.substring(0,1));
+                     System.out.println(rm.substring(0,1));
+                     roomsRepository.save(rooms);
 
 
 
@@ -198,7 +200,7 @@ public class TimeTableService {
                 t1.setHasClass(false);
                 t1.setSlot(j);
                 t1.setUser(user);
-                t1.setRoom("Null");
+                t1.setRoom("NULL");
                 timeTableRepository.save(t1);
 
             }

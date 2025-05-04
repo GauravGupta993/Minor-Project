@@ -78,7 +78,7 @@ public class AuthController {
 
     // Login endpoint
     @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> payload) {
+    public User login(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
         String password = payload.get("password");
         // Look up the user by email
@@ -86,9 +86,10 @@ public class AuthController {
         User user = userService.findByEmail(email).orElse(null);
         if (user != null && user.getPassword().equals(password)) {
             // In a real app, you would generate and return a token (like JWT)
-            return "Login successful";
+            return user;
         } else {
-            return "Invalid credentials";
+            throw new RuntimeException("Invalid email or password");
+
         }
     }
 }

@@ -30,13 +30,24 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    private String role;
+
     @Column(nullable = false)
     private String password;
 
     // Constructors
     public User() {}
 
-    public User(Integer sid, String name, String email, String password) {
+    public User(Integer sid, String name, String email, String password,String role) {
+        this.role=role;
         this.sid = sid;
         this.name = name;
         this.email = email;
@@ -47,6 +58,7 @@ public class User {
     public Integer getSid() {
         return sid;
     }
+
 
     public void setSid(Integer sid) {
         this.sid = sid;

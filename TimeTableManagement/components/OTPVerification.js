@@ -4,7 +4,7 @@ import tw from "twrnc";
 import axios from "axios";
 
 const OTPVerification = ({ route, navigation }) => {
-  const { email } = route.params; // Get email from signup page
+  const { email, role } = route.params; // Get email from signup page
   const [otp, setOtp] = useState("");
 
   const handleVerifyOTP = async () => {
@@ -22,7 +22,12 @@ const OTPVerification = ({ route, navigation }) => {
       console.log(response);
       if (response.data==='Signup successful') {
         Alert.alert("Success", "OTP Verified Successfully!");
-        navigation.navigate("Homepage"); // Redirect to Home or another page
+        if(role=="student"){
+          navigation.navigate("StudentHomepage");
+        }
+        else{
+          navigation.navigate("Homepage"); 
+        }
       }else if(response.data==='No pending signup found for this email'){
         Alert.alert(response.data);
       }

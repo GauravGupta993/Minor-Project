@@ -14,9 +14,15 @@ const StudentHomePage = ({ navigation }) => {
       const checkToken = async () => {
         try {
           const storedEmail = await AsyncStorage.getItem('email');
+          const storedRole = await AsyncStorage.getItem('role');
           console.log(storedEmail);
           if (storedEmail) {
-            navigation.navigate('MainScreen');
+            if(storedRole==="student"){
+              navigation.navigate("StudentMainScreen");
+            }
+            else{
+              navigation.navigate('MainScreen');
+            }
           }
           // navigation.navigate('MainScreen');
         } catch (error) {
@@ -39,13 +45,13 @@ const StudentHomePage = ({ navigation }) => {
           bgColor={colors.primary}
           textColor={colors.textWhite}
           content={'Login'}
-          onPress={() => navigation.navigate('Login')}
+          onPress={() => navigation.navigate('Login', { role: 'student' })}
         />
         <CustomButton
           bgColor={colors.bgGray}
           textColor={colors.textDark}
           content={'Signup'}
-          onPress={() => navigation.navigate('Signup')}
+          onPress={() => navigation.navigate('Signup', { role: 'student' })}
         />
       </View>
     </SafeAreaView>

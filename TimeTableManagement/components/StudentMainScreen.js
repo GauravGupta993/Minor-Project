@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, Alert, ImageBackground } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MainScreen = () => {
+const StudentMainScreen = () => {
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -12,20 +12,9 @@ const MainScreen = () => {
       const checkToken = async () => {
         try {
           const storedEmail = await AsyncStorage.getItem('email');
-          const storedName = await AsyncStorage.getItem('name');
-          const storedRole = await AsyncStorage.getItem('role');
-          const storedsid = await AsyncStorage.getItem('sid');
           console.log(storedEmail);
-          console.log(storedName);
-          console.log(storedRole);
-          console.log(storedsid);
-          if (storedEmail) {
-            if(storedRole==="student"){
-              navigation.navigate("StudentMainScreen");
-            }
-            else{
-              navigation.navigate('MainScreen');
-            }
+          if (!storedEmail) {
+            navigation.navigate('Homepage');
           }
         } catch (error) {
           console.error('Error retrieving email:', error);
@@ -41,6 +30,8 @@ const MainScreen = () => {
     try {
       // Remove the token (email) from storage
       await AsyncStorage.removeItem('email');
+      await AsyncStorage.removeItem('name');
+      await AsyncStorage.removeItem('role');
       // Alternatively, clear all storage: await AsyncStorage.clear();
 
       // Navigate to the Homepage or Login screen as per your flow
@@ -69,22 +60,10 @@ const MainScreen = () => {
     >
       <View className="flex-1 justify-center items-center bg-gray-100 bg-opacity-50">
         <TouchableOpacity
-          className="bg-blue-500 p-4 rounded-lg mb-4 w-64"
-          onPress={() => navigation.navigate('TimeTableImport')}
-        >
-          <Text className="text-white text-center text-lg">Upload Time Table</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           className="bg-green-500 p-4 rounded-lg mb-4 w-64"
           onPress={() => navigation.navigate('EmptyRoom')}
         >
           <Text className="text-white text-center text-lg">Show Empty Rooms</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-purple-500 p-4 rounded-lg mb-4 w-64"
-          onPress={() => navigation.navigate('TimeTable')}
-        >
-          <Text className="text-white text-center text-lg">Show and Edit Schedule</Text>
         </TouchableOpacity>
         
         {/* Bottom Two Buttons with Updated Colors */}
@@ -96,14 +75,20 @@ const MainScreen = () => {
         </TouchableOpacity>
         
         <TouchableOpacity
-          className="bg-teal-500 p-4 rounded-lg w-64"
-          onPress={() => navigation.navigate('TeacherAppointment')}
+          className="bg-teal-500 p-4 rounded-lg mb-4 w-64"
+          onPress={() => navigation.navigate('BookAppointment')}
         >
-          <Text className="text-white text-center text-lg">Appointments</Text>
+          <Text className="text-white text-center text-lg">Book Appointments</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-purple-500 p-4 rounded-lg w-64"
+          onPress={() => navigation.navigate('StudentAppointment')}
+        >
+          <Text className="text-white text-center text-lg">Student Appointments</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
   );
 };
 
-export default MainScreen;
+export default StudentMainScreen;

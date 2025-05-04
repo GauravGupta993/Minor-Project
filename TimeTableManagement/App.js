@@ -9,12 +9,16 @@ import Login from "./components/Login";
 import HomePage from "./components/Homepage";
 import OTPVerification from "./components/OTPVerification";
 import MainScreen from "./components/MainScreen";
+import StudentMainScreen from "./components/StudentMainScreen";
 import ImportTimetablePage from "./components/TimeTableImport"
 import TimeTableScreen from "./components/TimeTable";
 import EmptyRoomFinder from "./components/EmptyRoom";
 import StudentHomePage from "./components/StudentHomepage";
 import MainHomePage from "./components/MainHomePage";
 import RoomLocationsPage from "./components/RoomLocation";
+import BookAppointmentScreen from "./components/BookAppointments";
+import TeacherAppointmentsScreen from "./components/TeacherAppointments";
+import StudentAppointmentsScreen from "./components/StudentAppointments";
 
 // import "./global.css"
 
@@ -61,6 +65,26 @@ const App = () => {
           name="MainScreen"
           component={MainScreen}
           options={{ headerBackVisible: false, title: "MainScreen" }}
+        />
+        <Stack.Screen
+          name="StudentMainScreen"
+          component={StudentMainScreen}
+          options={{ headerBackVisible: false, title: "Student MainScreen" }}
+        />
+        <Stack.Screen
+          name="BookAppointment"
+          component={BookAppointmentScreen}
+          options={{ headerBackVisible: false, title: "Book Appointment" }}
+        />
+        <Stack.Screen
+          name="TeacherAppointment"
+          component={TeacherAppointmentsScreen}
+          options={{ headerBackVisible: false, title: "Teacher Appointments" }}
+        />
+        <Stack.Screen
+          name="StudentAppointment"
+          component={StudentAppointmentsScreen}
+          options={{ headerBackVisible: false, title: "Student Appointments" }}
         />
         <Stack.Screen name="TimeTableImport" component={ImportTimetablePage} />
         <Stack.Screen

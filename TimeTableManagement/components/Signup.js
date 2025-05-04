@@ -1,44 +1,61 @@
-import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import Heading from '../components/Heading';
-import CustomButton from '../components/CustomButton';
-import colors from '../assets/colors';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  StyleSheet,
+} from "react-native";
+import { useState } from "react";
+import { useRoute } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import Heading from "../components/Heading";
+import CustomButton from "../components/CustomButton";
+import colors from "../assets/colors";
 
 const Signup = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const route = useRoute();
+  const role = route.params?.role ; // default to student if not provided
 
   const handleSignup = async () => {
-    if (!name || !email || !password) {
-      Alert.alert('Error', 'Please fill all fields.');
+    if (!name || !email || !password ) {
+      Alert.alert("Error", "Please fill all fields.");
       return;
     }
 
     try {
-      const payload = { name, email, password };
-      const response = await fetch('http://10.0.2.2:8080/api/auth/signup/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const payload = { name, email, password, role }; // Include SID in payload
+      console.log(payload);
+      const response = await fetch(
+        "http://10.0.2.2:8080/api/auth/signup/request",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const responseText = await response.text();
-      console.log('Raw Response:', responseText);
+      console.log("Raw Response:", responseText);
 
-      if (responseText === 'Email already registered') {
-        Alert.alert('Error', 'Email Already Registered.');
+      if (responseText === "Email already registered") {
+        Alert.alert("Error", "Email Already Registered.");
       } else {
-        Alert.alert('Success', 'OTP Sent!', [
-          { text: 'OK', onPress: () => navigation.navigate('OTPVerification', {email:email}) },
+        Alert.alert("Success", "OTP Sent!", [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("OTPVerification", { email, role: role }),
+          },
         ]);
       }
     } catch (error) {
-      Alert.alert('Error', 'An error occurred. Please try again later.');
-      console.error('Signup error:', error);
+      Alert.alert("Error", "An error occurred. Please try again later.");
+      console.error("Signup error:", error);
     }
   };
 
@@ -80,7 +97,7 @@ const Signup = () => {
       />
       <View style={styles.footer}>
         <Text style={styles.text}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login', { role: role })}>
           <Text style={styles.linkText}>Login</Text>
         </TouchableOpacity>
       </View>
@@ -92,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 28,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   headingContainer: {
     marginTop: 100,
@@ -101,24 +118,24 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   input: {
-    backgroundColor: '#e5e5e5',
+    backgroundColor: "#e5e5e5",
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
     marginTop: 10,
-    color: '#333',
+    color: "#333",
   },
   footer: {
     marginTop: 40,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
   },
   text: {
-    color: '#666',
+    color: "#666",
   },
   linkText: {
     color: colors.primary,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });
 

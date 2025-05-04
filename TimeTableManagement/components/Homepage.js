@@ -39,13 +39,13 @@ const HomePage = ({ navigation }) => {
           bgColor={colors.primary}
           textColor={colors.textWhite}
           content={'Login'}
-          onPress={() => navigation.navigate('Login')}
+          onPress={() => navigation.navigate('Login', { role: 'teacher' })}
         />
         <CustomButton
           bgColor={colors.bgGray}
           textColor={colors.textDark}
           content={'Signup'}
-          onPress={() => navigation.navigate('Signup')}
+          onPress={() => navigation.navigate('Signup', { role: 'teacher' })}
         />
       </View>
     </SafeAreaView>

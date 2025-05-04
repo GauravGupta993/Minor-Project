@@ -25,7 +25,7 @@ public class AuthController {
     private final  TimeTableService timeTableService;
 
     // Temporary storage for pending user registration (email -> User)
-    private Map<String, User> pendingUsers = new HashMap<>();
+    private final Map<String, User> pendingUsers = new HashMap<>();
 
     public AuthController(OTPService otpService, UserService userService, TimeTableService timeTableService) {
         this.otpService = otpService;

@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRoute } from "@react-navigation/native";
-import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Alert, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Heading from '../components/Heading';
@@ -13,123 +13,107 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const route = useRoute();
-  const role = route.params?.role ; // default to student if not provided
+  const role = route.params?.role || 'student';
 
   useFocusEffect(
     useCallback(() => {
       const checkToken = async () => {
         try {
           const storedEmail = await AsyncStorage.getItem('email');
-          const storedName = await AsyncStorage.getItem('name');
           const storedRole = await AsyncStorage.getItem('role');
-          const storedsid = await AsyncStorage.getItem('sid');
-          console.log(storedEmail);
-          console.log(storedName);
-          console.log(storedRole);
-          console.log(storedsid);
           if (storedEmail) {
-            if(storedRole==="student"){
-              navigation.navigate("StudentMainScreen");
-            }
-            else{
-              navigation.navigate('MainScreen');
-            }
+            navigation.replace(storedRole === 'student' ? 'StudentMainScreen' : 'MainScreen');
           }
         } catch (error) {
-          console.error('Error retrieving email:', error);
+          console.error('Error retrieving token:', error);
         }
       };
-
       checkToken();
     }, [navigation])
   );
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+    if (!email.trim() || !password) {
+      Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
     setLoading(true);
-
     try {
-      console.log({ email, password, role });
-      const response = await fetch('http://10.0.2.2:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, role }),
+      const res = await fetch('http://10.0.2.2:8080/api/auth/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password, role }),
       });
-      const responseText = await response.text(); // Get raw response text
-      console.log('Raw Response:', responseText);
-      let responseData = JSON.parse(responseText);
-      console.log(responseData.role);
-      console.log(role);
-
-      if (responseData.role === role) {
-        // Store email as the token in AsyncStorage
-        await AsyncStorage.setItem('email', email);
-        await AsyncStorage.setItem('role', role);
-        await AsyncStorage.setItem('name', responseData.name);
-        await AsyncStorage.setItem('sid', responseData.sid.toString());
-        Alert.alert('Success', 'Login successful!');
-        // Redirect back to Homepage. Since email is now not empty,
-        // Homepage's useEffect can navigate to Dashboard.
-        if(role==="student"){
-          navigation.navigate("StudentMainScreen");
-        }
-        else{
-          navigation.navigate('MainScreen');
-        }
+      const data = await res.json();
+      if (data.role === role) {
+        await AsyncStorage.multiSet([
+          ['email', email.trim()],
+          ['role', role],
+          ['name', data.name],
+          ['sid', data.sid.toString()],
+        ]);
+        navigation.replace(role === 'student' ? 'StudentMainScreen' : 'MainScreen');
       } else {
-        Alert.alert('Error', 'Invalid email or password.');
+        Alert.alert('Error', 'Invalid credentials.');
       }
-    } catch (error) {
-      console.error('Login Error:', error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } catch (e) {
+      console.error('Login error:', e);
+      Alert.alert('Error', 'Unable to login.');
     }
-
     setLoading(false);
   };
 
   return (
-    <SafeAreaView className="container px-7 bg-white h-full">
-      <View className="mt-36">
-        <Heading content="Welcome Back" />
-      </View>
-      <View className="mt-4">
-        <TextInput
-          onChangeText={setEmail}
-          placeholder={'Email'}
-          placeholderTextColor={colors.textDark}
-          value={email}
-          className="bg-zinc-200 py-3 rounded-xl pl-5"
-        />
-        <TextInput
-          secureTextEntry={true}
-          onChangeText={setPassword}
-          placeholder={'Password'}
-          placeholderTextColor={colors.textDark}
-          value={password}
-          className="bg-zinc-200 py-3 rounded-xl pl-5 mt-3"
-        />
-      </View>
-
-      <CustomButton
-        bgColor={colors.primary}
-        textColor={colors.textWhite}
-        content={loading ? 'Logging in...' : 'Login'}
-        onPress={handleLogin}
-      />
-
-      <View className="mt-10">
-        <View className="flex flex-row items-center justify-center mt-44">
-          <Text className="text-textDark">Don't have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup', { role: role })}>
-            <Text className="underline text-textDark">Signup</Text>
+    <SafeAreaView className="flex-1 bg-gradient-to-b from-white to-gray-100 px-6">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+        <View className="items-center mt-16">
+          <Image source={require('../assets/log-in.png')} className="w-24 h-24 mb-4" />
+          <Heading content="Welcome Back" size="lg" />
+          <Text className="text-gray-500 mt-1">Login to your {role} account</Text>
+        </View>
+        <View className="mt-10 space-y-4">
+          <View>
+            <Text className="text-gray-700 mb-1">Email</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="example@mail.com"
+              placeholderTextColor={colors.textDark}
+              className="bg-white border border-gray-300 focus:border-primary rounded-xl px-4 py-3 shadow-sm"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+          <View>
+            <Text className="text-gray-700 mb-1">Password</Text>
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="••••••••"
+              placeholderTextColor={colors.textDark}
+              secureTextEntry
+              className="bg-white border border-gray-300 focus:border-primary rounded-xl px-4 py-3 shadow-sm"
+            />
+          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+            <Text className="text-right text-primary font-medium">Forgot Password?</Text>
           </TouchableOpacity>
         </View>
-      </View>
+        <View className="mt-8">
+          <CustomButton
+            content={loading ? 'Logging in...' : 'Login'}
+            onPress={handleLogin}
+            bgColor={colors.primary}
+            textColor={colors.textWhite}
+            className="rounded-xl py-3 shadow-lg"
+          />
+        </View>
+        <View className="flex-row justify-center mt-12">
+          <Text className="text-gray-600">Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup', { role })}>
+            <Text className="underline text-primary">Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

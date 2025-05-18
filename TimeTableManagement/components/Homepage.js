@@ -1,12 +1,11 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomButton from '../components/CustomButton';
 import colors from '../assets/colors';
 import Heading from '../components/Heading';
-import "../global.css";
 
 const HomePage = ({ navigation }) => {
   useFocusEffect(
@@ -14,11 +13,9 @@ const HomePage = ({ navigation }) => {
       const checkToken = async () => {
         try {
           const storedEmail = await AsyncStorage.getItem('email');
-          console.log(storedEmail);
           if (storedEmail) {
             navigation.navigate('MainScreen');
           }
-          // navigation.navigate('MainScreen');
         } catch (error) {
           console.error('Error retrieving email:', error);
         }
@@ -27,29 +24,71 @@ const HomePage = ({ navigation }) => {
       checkToken();
     }, [navigation])
   );
+
   return (
-    <SafeAreaView className="container px-7 bg-white h-full">
-      <View className="flex justify-center items-center mt-24" />
-      <Heading content="Teacher Portal" />
-      <Text className="text-sm opacity-60 text-textDark tracking-tight">
-        Time Table Management System
-      </Text>
-      <View className="mt-6">
-        <CustomButton
-          bgColor={colors.primary}
-          textColor={colors.textWhite}
-          content={'Login'}
-          onPress={() => navigation.navigate('Login', { role: 'teacher' })}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <Image
+          source={require('../assets/teacher.png')}
+          style={styles.logo}
         />
-        <CustomButton
-          bgColor={colors.bgGray}
-          textColor={colors.textDark}
-          content={'Signup'}
-          onPress={() => navigation.navigate('Signup', { role: 'teacher' })}
-        />
+        <Heading content="Teacher Portal" size="lg" />
+        <Text style={styles.subtitle}>Time Table Management System</Text>
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            bgColor={colors.primary}
+            textColor={colors.textWhite}
+            content={'Login'}
+            onPress={() => navigation.navigate('Login', { role: 'teacher' })}
+            style={styles.button}
+          />
+          <CustomButton
+            bgColor={colors.bgGray}
+            textColor={colors.textDark}
+            content={'Signup'}
+            onPress={() => navigation.navigate('Signup', { role: 'teacher' })}
+            style={styles.button}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 24,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'flex-start', // Align items to the top
+    alignItems: 'center',
+    marginTop: 40, // Adjust this value to move content upwards or downwards
+  },
+  logo: {
+    width: 96,
+    height: 96,
+    marginBottom: 16,
+    resizeMode: 'contain',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.textDark,
+    opacity: 0.6,
+    marginTop: 4,
+  },
+  buttonContainer: {
+    marginTop: 32,
+    width: '100%',
+  },
+  button: {
+    marginVertical: 8,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+});
 
 export default HomePage;

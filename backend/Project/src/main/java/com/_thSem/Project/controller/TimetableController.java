@@ -2,7 +2,6 @@ package com._thSem.Project.controller;
 
 import com._thSem.Project.model.TimeTableUpdateRequest;
 import com._thSem.Project.service.TimeTableService;
-import com._thSem.Project.service.TimetableConversionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

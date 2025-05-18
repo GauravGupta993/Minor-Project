@@ -1,6 +1,5 @@
 package com._thSem.Project.controller;
 
-import com._thSem.Project.service.TimetableConversionService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;

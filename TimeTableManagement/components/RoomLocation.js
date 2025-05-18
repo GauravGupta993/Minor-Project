@@ -8,9 +8,9 @@ const RoomLocationsPage = () => {
   // Room data: L1 to L10 with description and coordinates
   const rooms = [
     { name: 'Select Room', latitude: null, longitude: null, description: 'Please select a room' }, // Default value
-    { name: 'Room L1', latitude: 12.9716, longitude: 77.5946, description: 'Lecture Hall 1' },
-    { name: 'Room L2', latitude: 12.9721, longitude: 77.5952, description: 'Lecture Hall 2' },
-    { name: 'Room L3', latitude: 12.9730, longitude: 77.5960, description: 'Lecture Hall 3' },
+    { name: 'Room L1', latitude: 30.760618, longitude: 76.765388, description: 'In front of auditorium. Ground Floor' },
+    { name: 'Room L2', latitude: 12.9721, longitude: 77.5952, description: 'In front of auditorium. Ground Floor' },
+    { name: 'Room L3', latitude: 12.9730, longitude: 77.5960, description: 'In front of auditorium. Ground Floor' },
     { name: 'Room L4', latitude: 12.9740, longitude: 77.5970, description: 'Lecture Hall 4' },
     { name: 'Room L5', latitude: 12.9750, longitude: 77.5980, description: 'Lecture Hall 5' },
     { name: 'Room L6', latitude: 12.9760, longitude: 77.5990, description: 'Lecture Hall 6' },

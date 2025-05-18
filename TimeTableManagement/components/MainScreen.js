@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, Alert, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ImageBackground, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -20,10 +20,9 @@ const MainScreen = () => {
           console.log(storedRole);
           console.log(storedsid);
           if (storedEmail) {
-            if(storedRole==="student"){
+            if(storedRole === "student") {
               navigation.navigate("StudentMainScreen");
-            }
-            else{
+            } else {
               navigation.navigate('MainScreen');
             }
           }
@@ -41,8 +40,6 @@ const MainScreen = () => {
     try {
       // Remove the token (email) from storage
       await AsyncStorage.removeItem('email');
-      // Alternatively, clear all storage: await AsyncStorage.clear();
-
       // Navigate to the Homepage or Login screen as per your flow
       navigation.navigate('Main');
     } catch (error) {
@@ -63,47 +60,80 @@ const MainScreen = () => {
   }, [navigation]);
 
   return (
-    <ImageBackground
-      source={require('../assets/CMS.jpg')} // Replace with your image path
-      style={{ flex: 1 }}
+   <ImageBackground
+      source={{ uri: 'https://img.freepik.com/free-vector/geometric-background_53876-115958.jpg?semt=ais_hybrid&w=740' }} // Replace with your desired image URL
+      style={styles.background}
     >
-      <View className="flex-1 justify-center items-center bg-gray-100 bg-opacity-50">
+      <View style={styles.container}>
         <TouchableOpacity
-          className="bg-blue-500 p-4 rounded-lg mb-4 w-64"
+          style={[styles.button, { backgroundColor: '#4CAF50' }]}
           onPress={() => navigation.navigate('TimeTableImport')}
         >
-          <Text className="text-white text-center text-lg">Upload Time Table</Text>
+          <Text style={styles.buttonText}>Upload Time Table</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
-          className="bg-green-500 p-4 rounded-lg mb-4 w-64"
+          style={[styles.button, { backgroundColor: '#FF9800' }]}
           onPress={() => navigation.navigate('EmptyRoom')}
         >
-          <Text className="text-white text-center text-lg">Show Empty Rooms</Text>
+          <Text style={styles.buttonText}>Show Empty Rooms</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
-          className="bg-purple-500 p-4 rounded-lg mb-4 w-64"
+          style={[styles.button, { backgroundColor: '#9C27B0' }]}
           onPress={() => navigation.navigate('TimeTable')}
         >
-          <Text className="text-white text-center text-lg">Show and Edit Schedule</Text>
+          <Text style={styles.buttonText}>Show and Edit Schedule</Text>
         </TouchableOpacity>
-        
+
         {/* Bottom Two Buttons with Updated Colors */}
         <TouchableOpacity
-          className="bg-orange-500 p-4 rounded-lg mb-4 w-64"
+          style={[styles.button, { backgroundColor: '#00BCD4' }]}
           onPress={() => navigation.navigate('RoomLocation')}
         >
-          <Text className="text-white text-center text-lg">Room Locations</Text>
+          <Text style={styles.buttonText}>Room Locations</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
-          className="bg-teal-500 p-4 rounded-lg w-64"
+          style={[styles.button, { backgroundColor: '#009688' }]}
           onPress={() => navigation.navigate('TeacherAppointment')}
         >
-          <Text className="text-white text-center text-lg">Appointments</Text>
+          <Text style={styles.buttonText}>Appointments</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  container: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    width: '80%',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    alignItems: 'center',
+    elevation: 5, // Adds shadow for Android
+    shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default MainScreen;
